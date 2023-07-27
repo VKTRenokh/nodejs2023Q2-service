@@ -46,4 +46,15 @@ export class DatabaseService {
 
     return this.parseUser(user);
   }
+
+  deleteUserById(id: string) {
+    const userIndex = this.db.users.findIndex((user) => user.id === id);
+
+    if (userIndex === -1) {
+      return false;
+    }
+
+    this.db.users.splice(userIndex, 1);
+    return true;
+  }
 }
