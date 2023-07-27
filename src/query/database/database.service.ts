@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { CreateUserDto } from 'src/types/createUser';
 import { Db } from 'src/types/db';
 import { User } from 'src/types/user';
 
@@ -56,5 +57,27 @@ export class DatabaseService {
 
     this.db.users.splice(userIndex, 1);
     return true;
+  }
+
+  createUser(userDto: CreateUserDto) {
+    console.log('userDto', userDto);
+
+    const user = {
+      login: userDto.login,
+      password: crypto
+        .createHash('sha256')
+        .update(userDto.password)
+        .digest('base64'),
+      id: crypto.randomUUID(),
+      version: 0,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    this.db.users.push(user);
+
+    console.log(this.db.users);
+
+    return user;
   }
 }
