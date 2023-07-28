@@ -96,6 +96,13 @@ export class DatabaseService {
       return;
     }
 
+    this.db.users[userIndex].password = crypto
+      .createHash('sha256')
+      .update(dto.newPassword)
+      .digest('base64');
+
+    this.db.users[userIndex].version++;
+
     return this.db.users[userIndex];
   }
 }
