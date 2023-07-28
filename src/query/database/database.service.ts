@@ -21,6 +21,22 @@ export class DatabaseService {
         updatedAt: Date.now(),
       },
     ],
+    tracks: [
+      {
+        id: crypto.randomUUID(),
+        name: crypto.randomBytes(16).toString('base64'),
+        duration: crypto.randomInt(20, 120),
+        artistId: null,
+        albumId: null,
+      },
+    ],
+    artists: [
+      {
+        id: crypto.randomUUID(),
+        name: crypto.randomBytes(16).toString('base64'),
+        grammy: false,
+      },
+    ],
   };
 
   parseUser(user: User) {
