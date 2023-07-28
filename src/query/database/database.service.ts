@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { UpdatePasswordDto } from 'src/types/changeUser';
 import { CreateUserDto } from 'src/types/createUser';
 import { Db } from 'src/types/db';
 import { User } from 'src/types/user';
@@ -79,5 +80,22 @@ export class DatabaseService {
     console.log(this.db.users);
 
     return user;
+  }
+
+  updateUser(id: string, dto: UpdatePasswordDto) {
+    const userIndex = this.db.users.findIndex((user) => user.id === id);
+
+    if (userIndex === -1) {
+      return;
+    }
+
+    if (
+      crypto.createHash('sha256').update(dto.oldPassword).digest('base64') !==
+      this.db.users[userIndex].password
+    ) {
+      return;
+    }
+
+    return this.db.users[userIndex];
   }
 }
