@@ -121,4 +121,8 @@ export class DatabaseService {
 
     return this.db.users[userIndex];
   }
+
+  getAllTracks() {
+    return this.db.tracks;
+  }
 }
