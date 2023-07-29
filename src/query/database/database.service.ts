@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 import { UpdatePasswordDto } from 'src/types/changeUser';
 import { CreateUserDto } from 'src/types/createUser';
 import { Db } from 'src/types/db';
+import { Track, TrackCreateDto } from 'src/types/track';
 import { User } from 'src/types/user';
 
 @Injectable()
@@ -77,8 +78,6 @@ export class DatabaseService {
   }
 
   createUser(userDto: CreateUserDto) {
-    console.log('userDto', userDto);
-
     const user = {
       login: userDto.login,
       password: crypto
@@ -131,13 +130,21 @@ export class DatabaseService {
   }
 
   deleteTrackById(id: string) {
-    const trackIndex = this.db.tracks.findIndex(track => track.id === id)
+    const trackIndex = this.db.tracks.findIndex((track) => track.id === id);
 
     if (trackIndex === -1) {
-      return false
+      return false;
     }
 
-    this.db.tracks.splice(trackIndex, 1)
-    return true
+    this.db.tracks.splice(trackIndex, 1);
+    return true;
+  }
+
+  createTrack(dto: TrackCreateDto) {
+    const newTrack: Track = { ...dto, id: crypto.randomUUID() };
+
+    this.db.tracks.push(newTrack);
+
+    return newTrack;
   }
 }

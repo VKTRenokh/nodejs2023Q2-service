@@ -19,7 +19,7 @@ import { DatabaseService } from '../database/database.service';
 
 @Controller('user')
 export class UsersController {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(private readonly database: DatabaseService) { }
 
   @Get()
   getAll() {
@@ -46,7 +46,6 @@ export class UsersController {
   @HttpCode(204)
   delete(@Param('id') id: string) {
     if (!isUUID(id)) {
-      console.log('delete id is invalid', id);
       throw new HttpException('uuid is not valid', 400);
     }
 
