@@ -7,6 +7,7 @@ import {
   HttpException,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { isUUID } from 'class-validator';
 import { isTrackCreateDto, Track, TrackCreateDto } from 'src/types/track';
@@ -62,5 +63,25 @@ export class TracksController {
     }
 
     return this.dataBaseService.createTrack(dto);
+  }
+
+  @Put(':id')
+  @HttpCode(200)
+  update(@Body() dto: TrackCreateDto, @Param('id') id: string) {
+    if (!isUUID(id)) {
+      throw new HttpException('uuid is not valid', 400);
+    }
+
+    if (!isTrackCreateDto(dto)) {
+      throw new HttpException('body does not contain required fields', 400);
+    }
+
+    const updated = this.dataBaseService.updateTrack(id, dto);
+
+    if (!updated) {
+      throw new HttpException('track not found', 404);
+    }
+
+    return updated;
   }
 }

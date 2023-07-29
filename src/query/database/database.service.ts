@@ -147,4 +147,16 @@ export class DatabaseService {
 
     return newTrack;
   }
+
+  updateTrack(id: string, dto: TrackCreateDto) {
+    const trackIndex = this.db.tracks.findIndex((track) => track.id === id);
+
+    if (trackIndex === -1) {
+      return;
+    }
+
+    this.db.tracks[trackIndex] = { ...this.db.tracks[trackIndex], ...dto };
+
+    return this.db.tracks[trackIndex];
+  }
 }
