@@ -129,4 +129,15 @@ export class DatabaseService {
   getTrackById(id: string) {
     return this.db.tracks.find((track) => track.id === id);
   }
+
+  deleteTrackById(id: string) {
+    const trackIndex = this.db.tracks.findIndex(track => track.id === id)
+
+    if (trackIndex === -1) {
+      return false
+    }
+
+    this.db.tracks.splice(trackIndex, 1)
+    return true
+  }
 }

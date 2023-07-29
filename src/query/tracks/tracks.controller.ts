@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpException, Param } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, HttpException, Param } from '@nestjs/common';
 import { isUUID } from 'class-validator';
 import { DatabaseService } from '../database/database.service';
 
@@ -26,5 +26,21 @@ export class TracksController {
     }
 
     return track
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  deleteOne(@Param('id') id: string) {
+    if (!isUUID(id)) {
+      throw new HttpException('uuid is invalid', 400)
+    }
+
+    const deleted = this.dataBaseService.deleteTrackById(id)
+
+    if (!deleted) {
+      throw new HttpException('track not found', 404)
+    }
+
+    return deleted
   }
 }
