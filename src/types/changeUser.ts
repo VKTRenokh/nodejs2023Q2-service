@@ -9,7 +9,7 @@ export const isUserUpdatePasswordDto = (
   return (
     typeof data === 'object' &&
     data &&
-    'oldPassword' in data &&
-    'newPassword' in data
+    typeof data['oldPassword'] === 'string' &&
+    typeof data['newPassword'] === 'string'
   );
 };

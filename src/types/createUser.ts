@@ -4,5 +4,10 @@ export interface CreateUserDto {
 }
 
 export const isCreateUserDto = (obj: unknown): obj is CreateUserDto => {
-  return typeof obj === 'object' && obj && 'login' in obj && 'password' in obj;
+  return (
+    typeof obj === 'object' &&
+    obj &&
+    typeof obj['login'] === 'string' &&
+    typeof obj['password'] === 'string'
+  );
 };

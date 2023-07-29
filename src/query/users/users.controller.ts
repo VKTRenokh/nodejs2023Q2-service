@@ -19,7 +19,7 @@ import { DatabaseService } from '../database/database.service';
 
 @Controller('user')
 export class UsersController {
-  constructor(private readonly database: DatabaseService) { }
+  constructor(private readonly database: DatabaseService) {}
 
   @Get()
   getAll() {
@@ -27,7 +27,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @HttpCode(204)
+  @HttpCode(200)
   get(@Param('id') id: string) {
     if (!isUUID(id)) {
       throw new HttpException('uuid is not valid', 400);
@@ -60,7 +60,7 @@ export class UsersController {
   @HttpCode(201)
   create(@Body() userDto: CreateUserDto) {
     if (!isCreateUserDto(userDto)) {
-      return;
+      throw new HttpException('userDto is invalid', 400);
     }
 
     return this.database.createUser(userDto);

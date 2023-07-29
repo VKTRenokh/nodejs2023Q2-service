@@ -13,11 +13,11 @@ export class DatabaseService {
       {
         id: crypto.randomUUID(),
         login: crypto.randomBytes(16).toString('hex'),
-        version: 0,
+        version: 1,
         password: crypto
           .createHash('sha256')
           .update(crypto.randomBytes(32))
-          .digest('hex'),
+          .digest('base64'),
         createdAt: Date.now(),
         updatedAt: Date.now(),
       },
@@ -85,16 +85,14 @@ export class DatabaseService {
         .update(userDto.password)
         .digest('base64'),
       id: crypto.randomUUID(),
-      version: 0,
+      version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
 
     this.db.users.push(user);
 
-    console.log(this.db.users);
-
-    return user;
+    return this.parseUser(user);
   }
 
   updateUser(id: string, dto: UpdatePasswordDto) {
@@ -117,8 +115,9 @@ export class DatabaseService {
       .digest('base64');
 
     this.db.users[userIndex].version++;
+    this.db.users[userIndex].updatedAt = Date.now();
 
-    return this.db.users[userIndex];
+    return this.parseUser(this.db.users[userIndex]);
   }
 
   getAllTracks() {
