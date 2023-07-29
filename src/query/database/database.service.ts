@@ -158,4 +158,10 @@ export class DatabaseService {
 
     return this.db.tracks[trackIndex];
   }
+
+  getAllArtists() {
+    console.log('artist', this.db.artists);
+
+    return this.db.artists;
+  }
 }
