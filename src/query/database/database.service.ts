@@ -125,4 +125,8 @@ export class DatabaseService {
   getAllTracks() {
     return this.db.tracks;
   }
+
+  getTrackById(id: string) {
+    return this.db.tracks.find((track) => track.id === id);
+  }
 }
