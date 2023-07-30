@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpException,
@@ -50,5 +51,19 @@ export class ArtistsController {
     console.log('valid dto');
 
     return this.databaseService.createArtist(dto);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  deleteOne(@Param('id') id: string) {
+    if (!isUUID(id)) {
+      throw new HttpException('uuid is invalid', 400);
+    }
+
+    const deleted = this.databaseService.deleteArtist(id);
+
+    if (!deleted) {
+      throw new HttpException('artist not found', 404);
+    }
   }
 }

@@ -161,8 +161,6 @@ export class DatabaseService {
   }
 
   getAllArtists() {
-    console.log('artist', this.db.artists);
-
     return this.db.artists;
   }
 
@@ -176,5 +174,17 @@ export class DatabaseService {
     this.db.artists.push(artist);
 
     return artist;
+  }
+
+  deleteArtist(id: string) {
+    const artistIndex = this.db.artists.findIndex((artist) => artist.id === id);
+
+    if (artistIndex === -1) {
+      return false;
+    }
+
+    this.db.artists.splice(artistIndex, 1);
+
+    return true;
   }
 }
