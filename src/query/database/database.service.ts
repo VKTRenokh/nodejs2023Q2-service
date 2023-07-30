@@ -39,6 +39,14 @@ export class DatabaseService {
         grammy: false,
       },
     ],
+    albums: [
+      {
+        id: crypto.randomUUID(),
+        name: 'name',
+        year: 1947,
+        aritstId: null,
+      },
+    ],
   };
 
   parseUser(user: User) {
@@ -198,5 +206,9 @@ export class DatabaseService {
     this.db.artists[artistIndex] = { ...dto, id };
 
     return this.db.artists[artistIndex];
+  }
+
+  getAllAlbums() {
+    return this.db.albums;
   }
 }
