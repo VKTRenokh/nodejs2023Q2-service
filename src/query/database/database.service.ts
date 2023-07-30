@@ -211,4 +211,8 @@ export class DatabaseService {
   getAllAlbums() {
     return this.db.albums;
   }
+
+  getAlbumById(id: string) {
+    return this.db.albums.find((album) => album.id === id);
+  }
 }
