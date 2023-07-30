@@ -187,4 +187,16 @@ export class DatabaseService {
 
     return true;
   }
+
+  updateArtist(id: string, dto: CreateArtistDto) {
+    const artistIndex = this.db.artists.findIndex((artist) => artist.id === id);
+
+    if (!artistIndex) {
+      return;
+    }
+
+    this.db.artists[artistIndex] = { ...dto, id };
+
+    return this.db.artists[artistIndex];
+  }
 }
