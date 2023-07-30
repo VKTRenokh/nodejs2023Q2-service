@@ -1,11 +1,14 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
   HttpException,
   Param,
+  Post,
 } from '@nestjs/common';
 import { isUUID } from 'class-validator';
+import { CreateAlbumDto, isCreateAlbumDto } from 'src/types/album';
 import { DatabaseService } from '../database/database.service';
 
 @Controller('album')
@@ -32,5 +35,15 @@ export class AlbumsController {
     }
 
     return album;
+  }
+
+  @Post()
+  @HttpCode(201)
+  create(@Body() dto: CreateAlbumDto) {
+    if (!isCreateAlbumDto(dto)) {
+      throw new HttpException('body doesnt contain required fields', 400);
+    }
+
+    return this.database.createAlbum(dto);
   }
 }

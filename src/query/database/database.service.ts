@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { CreateAlbumDto } from 'src/types/album';
 import { UpdatePasswordDto } from 'src/types/changeUser';
 import { CreateArtistDto } from 'src/types/createArtist';
 import { CreateUserDto } from 'src/types/createUser';
@@ -44,7 +45,7 @@ export class DatabaseService {
         id: crypto.randomUUID(),
         name: 'name',
         year: 1947,
-        aritstId: null,
+        artistId: null,
       },
     ],
   };
@@ -214,5 +215,13 @@ export class DatabaseService {
 
   getAlbumById(id: string) {
     return this.db.albums.find((album) => album.id === id);
+  }
+
+  createAlbum(dto: CreateAlbumDto) {
+    const album = { ...dto, id: crypto.randomUUID() };
+
+    this.db.albums.push(album);
+
+    return album;
   }
 }
