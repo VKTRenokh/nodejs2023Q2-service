@@ -175,8 +175,6 @@ export class DatabaseService {
 
     this.db.artists.push(artist);
 
-    console.log(this.db.artists);
-
     return artist;
   }
 }

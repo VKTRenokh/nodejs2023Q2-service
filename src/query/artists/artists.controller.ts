@@ -21,7 +21,7 @@ export class ArtistsController {
     return this.databaseService.getAllArtists();
   }
 
-  @Get('id')
+  @Get(':id')
   @HttpCode(200)
   getOne(@Param('id') id: string) {
     if (!isUUID(id)) {
@@ -40,9 +40,14 @@ export class ArtistsController {
   @Post()
   @HttpCode(201)
   createOne(@Body() dto: any) {
+    console.log('create artist', dto);
+
     if (!isCreateArtistDto(dto)) {
+      console.log('invalid dto');
       throw new HttpException('body does not contain required fields', 400);
     }
+
+    console.log('valid dto');
 
     return this.databaseService.createArtist(dto);
   }

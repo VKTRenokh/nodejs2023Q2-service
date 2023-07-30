@@ -8,6 +8,6 @@ export const isCreateArtistDto = (dto: unknown): dto is CreateArtistDto => {
     typeof dto === 'object' &&
     dto &&
     typeof dto['name'] === 'string' &&
-    typeof ['grammy'] === 'boolean'
+    typeof dto['grammy'] === 'boolean'
   );
 };
