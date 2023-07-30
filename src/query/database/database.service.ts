@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { UpdatePasswordDto } from 'src/types/changeUser';
+import { CreateArtistDto } from 'src/types/createArtist';
 import { CreateUserDto } from 'src/types/createUser';
 import { Db } from 'src/types/db';
 import { Track, TrackCreateDto } from 'src/types/track';
@@ -163,5 +164,19 @@ export class DatabaseService {
     console.log('artist', this.db.artists);
 
     return this.db.artists;
+  }
+
+  getArtistById(id: string) {
+    return this.db.artists.find((artist) => artist.id === id);
+  }
+
+  createArtist(dto: CreateArtistDto) {
+    const artist = { ...dto, id: crypto.randomUUID() };
+
+    this.db.artists.push(artist);
+
+    console.log(this.db.artists);
+
+    return artist;
   }
 }
