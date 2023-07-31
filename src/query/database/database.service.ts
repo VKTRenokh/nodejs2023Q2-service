@@ -351,15 +351,35 @@ export class DatabaseService {
       (artist) => artist === id,
     );
 
-    console.log('delete artist before', this.db.favs);
-
     if (!artistIndex) {
       return false;
     }
 
     this.db.favs.artists.splice(artistIndex, 1);
 
-    console.log('delete artist after', this.db.favs);
+    return true;
+  }
+
+  removeAlbumFromFavs(id: string) {
+    const albumIndex = this.db.favs.albums.findIndex((artist) => artist === id);
+
+    if (!albumIndex) {
+      return false;
+    }
+
+    this.db.favs.albums.splice(albumIndex, 1);
+
+    return true;
+  }
+
+  removeTrackFromFavs(id: string) {
+    const trackIndex = this.db.favs.tracks.findIndex((artist) => artist === id);
+
+    if (!trackIndex) {
+      return false;
+    }
+
+    this.db.favs.tracks.splice(trackIndex, 1);
 
     return true;
   }

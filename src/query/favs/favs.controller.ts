@@ -84,4 +84,32 @@ export class FavsController {
 
     return id;
   }
+
+  @Delete('track/:id')
+  @HttpCode(204)
+  removeTrack(@Param('id') id: string) {
+    if (!isUUID(id)) {
+      throw new HttpException('uuid is not valid', 400);
+    }
+
+    const removed = this.db.removeTrackFromFavs(id);
+
+    if (!removed) {
+      throw new HttpException('album not found', 404);
+    }
+  }
+
+  @Delete('album/:id')
+  @HttpCode(204)
+  removeAlbum(@Param('id') id: string) {
+    if (!isUUID(id)) {
+      throw new HttpException('uuid is not valid', 400);
+    }
+
+    const removed = this.db.removeAlbumFromFavs(id);
+
+    if (!removed) {
+      throw new HttpException('album not found', 404);
+    }
+  }
 }
