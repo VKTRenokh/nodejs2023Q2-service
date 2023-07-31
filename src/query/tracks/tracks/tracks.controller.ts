@@ -10,8 +10,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { isUUID } from 'class-validator';
-import { isTrackCreateDto, Track, TrackCreateDto } from 'src/types/track';
-import { DatabaseService } from '../database/database.service';
+import { DatabaseService } from 'src/shared/database/database.service';
+import { isTrackCreateDto, TrackCreateDto } from 'src/types/track';
 
 @Controller('track')
 export class TracksController {

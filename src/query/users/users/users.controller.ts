@@ -10,12 +10,12 @@ import {
   Put,
 } from '@nestjs/common';
 import { isUUID } from 'class-validator';
+import { DatabaseService } from 'src/shared/database/database.service';
 import {
   isUserUpdatePasswordDto,
   UpdatePasswordDto,
 } from 'src/types/changeUser';
 import { CreateUserDto, isCreateUserDto } from 'src/types/createUser';
-import { DatabaseService } from '../database/database.service';
 
 @Controller('user')
 export class UsersController {

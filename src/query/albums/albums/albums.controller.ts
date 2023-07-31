@@ -10,8 +10,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { isUUID } from 'class-validator';
+import { DatabaseService } from 'src/shared/database/database.service';
 import { CreateAlbumDto, isCreateAlbumDto } from 'src/types/album';
-import { DatabaseService } from '../database/database.service';
 
 @Controller('album')
 export class AlbumsController {

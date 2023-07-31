@@ -8,7 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { isUUID } from 'class-validator';
-import { DatabaseService } from '../database/database.service';
+import { DatabaseService } from 'src/shared/database/database.service';
 
 @Controller('favs')
 export class FavsController {

@@ -1,14 +1,21 @@
 import { Module } from '@nestjs/common';
-import { QueryController } from './query.controller';
-import { DatabaseService } from './database/database.service';
-import { UsersController } from './users/users.controller';
-import { TracksController } from './tracks/tracks.controller';
-import { ArtistsController } from './artists/artists.controller';
-import { AlbumsController } from './albums/albums.controller';
-import { FavsController } from './favs/favs.controller';
+import { DatabaseService } from 'src/shared/database/database.service';
+import { SharedModule } from 'src/shared/shared.module';
+import { AlbumsModule } from './albums/albums.module';
+import { ArtistsModule } from './artists/artists.module';
+import { FavsModule } from './favs/favs.module';
+import { TracksModule } from './tracks/tracks.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  controllers: [QueryController, UsersController, TracksController, ArtistsController, AlbumsController, FavsController],
+  imports: [
+    UsersModule,
+    TracksModule,
+    ArtistsModule,
+    AlbumsModule,
+    FavsModule,
+    SharedModule,
+  ],
   providers: [DatabaseService],
 })
 export class QueryModule {}
