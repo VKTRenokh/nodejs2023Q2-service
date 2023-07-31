@@ -224,4 +224,35 @@ export class DatabaseService {
 
     return album;
   }
+
+  updateAlbum(id: string, dto: CreateAlbumDto) {
+    const albumIndex = this.db.albums.findIndex((album) => album.id === id);
+
+    if (albumIndex === -1) {
+      return;
+    }
+
+    this.db.albums[albumIndex] = { ...dto, id };
+
+    return this.db.albums[albumIndex];
+  }
+
+  deleteAlbum(id: string) {
+    const albumIndex = this.db.albums.findIndex((album) => album.id === id);
+
+    if (albumIndex === -1) {
+      return false;
+    }
+
+    this.db.tracks = this.db.tracks.map((track) => {
+      if (track.albumId === id) {
+        track.albumId = null;
+      }
+      return track;
+    });
+
+    this.db.albums.splice(albumIndex, 1);
+
+    return true;
+  }
 }

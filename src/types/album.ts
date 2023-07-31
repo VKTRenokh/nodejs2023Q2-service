@@ -1,5 +1,3 @@
-import { CreateArtistDto } from './createArtist';
-
 export interface Album {
   id: string;
   name: string;
@@ -13,7 +11,7 @@ export interface CreateAlbumDto {
   artistId: string | null;
 }
 
-export const isCreateAlbumDto = (obj: unknown): obj is CreateArtistDto => {
+export const isCreateAlbumDto = (obj: unknown): obj is CreateAlbumDto => {
   return (
     typeof obj === 'object' &&
     obj &&
