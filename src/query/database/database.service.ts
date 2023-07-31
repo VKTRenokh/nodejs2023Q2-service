@@ -312,4 +312,16 @@ export class DatabaseService {
 
     return id;
   }
+
+  addAlbumToFavs(id: string) {
+    const album = this.getAlbumById(id);
+
+    if (!album) {
+      return;
+    }
+
+    this.db.favs.albums.push(id);
+
+    return id;
+  }
 }
