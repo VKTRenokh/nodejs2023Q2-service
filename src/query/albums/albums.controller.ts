@@ -79,7 +79,7 @@ export class AlbumsController {
     const deleted = this.database.deleteAlbum(id);
 
     if (!deleted) {
-      throw new HttpException('album not found', 400);
+      throw new HttpException('album not found', 404);
     }
   }
 }

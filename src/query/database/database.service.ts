@@ -192,6 +192,20 @@ export class DatabaseService {
       return false;
     }
 
+    this.db.tracks = this.db.tracks.map((track) => {
+      if (track.artistId === id) {
+        track.artistId = null;
+      }
+      return track;
+    });
+
+    this.db.albums = this.db.albums.map((track) => {
+      if (track.artistId === id) {
+        track.artistId = null;
+      }
+      return track;
+    });
+
     this.db.artists.splice(artistIndex, 1);
 
     return true;
@@ -200,7 +214,7 @@ export class DatabaseService {
   updateArtist(id: string, dto: CreateArtistDto) {
     const artistIndex = this.db.artists.findIndex((artist) => artist.id === id);
 
-    if (!artistIndex) {
+    if (artistIndex === -1) {
       return;
     }
 
