@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { QueryModule } from './query/query.module';
+import { CoreModule } from './core/core.module';
 
 @Module({
-  imports: [QueryModule],
+  imports: [CoreModule],
   controllers: [],
   providers: [],
 })
