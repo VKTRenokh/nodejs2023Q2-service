@@ -5,9 +5,10 @@ import { UsersController } from './users/users.controller';
 import { TracksController } from './tracks/tracks.controller';
 import { ArtistsController } from './artists/artists.controller';
 import { AlbumsController } from './albums/albums.controller';
+import { FavsController } from './favs/favs.controller';
 
 @Module({
-  controllers: [QueryController, UsersController, TracksController, ArtistsController, AlbumsController],
+  controllers: [QueryController, UsersController, TracksController, ArtistsController, AlbumsController, FavsController],
   providers: [DatabaseService],
 })
 export class QueryModule {}

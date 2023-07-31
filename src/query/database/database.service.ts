@@ -48,6 +48,11 @@ export class DatabaseService {
         artistId: null,
       },
     ],
+    favs: {
+      tracks: [],
+      albums: [],
+      artists: [],
+    },
   };
 
   parseUser(user: User) {
@@ -268,5 +273,43 @@ export class DatabaseService {
     this.db.albums.splice(albumIndex, 1);
 
     return true;
+  }
+
+  getFavTracks() {
+    return this.db.favs.tracks.map((id) => {
+      return this.getTrackById(id);
+    });
+  }
+
+  getFavAlbums() {
+    return this.db.favs.albums.map((id) => {
+      return this.getAlbumById(id);
+    });
+  }
+
+  getFavArtists() {
+    return this.db.favs.artists.map((id) => {
+      return this.getArtistById(id);
+    });
+  }
+
+  getAllFavs() {
+    return {
+      tracks: this.getFavTracks(),
+      albums: this.getFavAlbums(),
+      artists: this.getFavArtists(),
+    };
+  }
+
+  addTrackToFavs(id: string) {
+    const track = this.getTrackById(id);
+
+    if (!track) {
+      return;
+    }
+
+    this.db.favs.tracks.push(id);
+
+    return id;
   }
 }
