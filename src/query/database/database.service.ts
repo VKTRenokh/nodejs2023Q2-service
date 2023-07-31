@@ -276,21 +276,28 @@ export class DatabaseService {
   }
 
   getFavTracks() {
-    return this.db.favs.tracks.map((id) => {
-      return this.getTrackById(id);
-    });
+    return this.db.favs.tracks
+      .map((id) => {
+        return this.getTrackById(id);
+      })
+      .filter(Boolean);
   }
 
   getFavAlbums() {
-    return this.db.favs.albums.map((id) => {
-      return this.getAlbumById(id);
-    });
+    return this.db.favs.albums
+      .map((id) => {
+        return this.getAlbumById(id);
+      })
+      .filter(Boolean);
   }
 
   getFavArtists() {
-    return this.db.favs.artists.map((id) => {
-      return this.getArtistById(id);
-    });
+    return this.db.favs.artists
+      .map((id) => {
+        console.log(this.getArtistById(id), 'asdfdasffd');
+        return this.getArtistById(id);
+      })
+      .filter(Boolean);
   }
 
   getAllFavs() {
@@ -323,5 +330,37 @@ export class DatabaseService {
     this.db.favs.albums.push(id);
 
     return id;
+  }
+
+  addArtistToFavs(id: string) {
+    const artist = this.getArtistById(id);
+
+    if (!artist) {
+      return;
+    }
+
+    this.db.favs.artists.push(id);
+
+    return id;
+  }
+
+  removeArtistFromFavs(id: string) {
+    console.log(this.db.favs, 'favs');
+
+    const artistIndex = this.db.favs.artists.findIndex(
+      (artist) => artist === id,
+    );
+
+    console.log('delete artist before', this.db.favs);
+
+    if (!artistIndex) {
+      return false;
+    }
+
+    this.db.favs.artists.splice(artistIndex, 1);
+
+    console.log('delete artist after', this.db.favs);
+
+    return true;
   }
 }
