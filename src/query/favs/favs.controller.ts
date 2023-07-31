@@ -30,7 +30,7 @@ export class FavsController {
     const created = this.db.addTrackToFavs(id);
 
     if (!created) {
-      throw new HttpException('track not found', 404);
+      throw new HttpException('track not found', 422);
     }
 
     return id;
@@ -46,7 +46,7 @@ export class FavsController {
     const created = this.db.addAlbumToFavs(id);
 
     if (!created) {
-      throw new HttpException('album not found', 404);
+      throw new HttpException('album not found', 422);
     }
 
     return id;
@@ -63,7 +63,7 @@ export class FavsController {
     const created = this.db.addArtistToFavs(id);
 
     if (!created) {
-      throw new HttpException('album not found', 404);
+      throw new HttpException('album not found', 422);
     }
 
     return id;
@@ -79,7 +79,7 @@ export class FavsController {
     const removed = this.db.removeArtistFromFavs(id);
 
     if (!removed) {
-      throw new HttpException('album not found', 404);
+      throw new HttpException('album not found', 422);
     }
 
     return id;
