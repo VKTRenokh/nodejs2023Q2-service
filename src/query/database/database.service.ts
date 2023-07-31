@@ -294,7 +294,6 @@ export class DatabaseService {
   getFavArtists() {
     return this.db.favs.artists
       .map((id) => {
-        console.log(this.getArtistById(id), 'asdfdasffd');
         return this.getArtistById(id);
       })
       .filter(Boolean);
@@ -345,8 +344,6 @@ export class DatabaseService {
   }
 
   removeArtistFromFavs(id: string) {
-    console.log(this.db.favs, 'favs');
-
     const artistIndex = this.db.favs.artists.findIndex(
       (artist) => artist === id,
     );

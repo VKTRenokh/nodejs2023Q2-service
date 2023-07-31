@@ -56,7 +56,6 @@ export class FavsController {
   @HttpCode(201)
   addArtist(@Param('id') id: string) {
     if (!isUUID(id)) {
-      console.log('invalid id', id);
       throw new HttpException('uuid is not valid', 400);
     }
 
