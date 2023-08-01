@@ -8,7 +8,7 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/VKTRenokh/nodejs2023Q2-service.git -b develop
 ```
 
 ## Installing NPM modules
@@ -21,6 +21,12 @@ npm install
 
 ```
 npm start
+```
+
+## Running application in dev mode
+
+```
+npm start:dev
 ```
 
 After starting the app on port (4000 as default) you can open
