@@ -26,3 +26,5 @@ async function bootstrap() {
   await app.listen(port);
 }
 bootstrap();
+
+console.log('bootstrap console log hot reload test');
