@@ -6,10 +6,10 @@ import {
   HttpCode,
   HttpException,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
-import { isUUID } from 'class-validator';
 import { DatabaseService } from 'src/shared/database/database.service';
 import {
   isUserUpdatePasswordDto,
@@ -28,11 +28,7 @@ export class UsersController {
 
   @Get(':id')
   @HttpCode(200)
-  get(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  get(@Param('id', new ParseUUIDPipe()) id: string) {
     const user = this.database.getUserById(id);
 
     if (!user) {
@@ -44,11 +40,7 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  delete(@Param('id', new ParseUUIDPipe()) id: string) {
     const isDeleted = this.database.deleteUserById(id);
 
     if (!isDeleted) {
@@ -70,12 +62,8 @@ export class UsersController {
   @HttpCode(200)
   change(
     @Body() changeUserPasswordDto: UpdatePasswordDto,
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
   ) {
-    if (!isUUID(id)) {
-      throw new HttpException('user id is invalid', 400);
-    }
-
     if (!isUserUpdatePasswordDto(changeUserPasswordDto)) {
       throw new HttpException('body doesnt contains required fields', 400);
     }

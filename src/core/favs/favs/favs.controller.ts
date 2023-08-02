@@ -5,9 +5,9 @@ import {
   HttpCode,
   HttpException,
   Param,
+  ParseUUIDPipe,
   Post,
 } from '@nestjs/common';
-import { isUUID } from 'class-validator';
 import { DatabaseService } from 'src/shared/database/database.service';
 
 @Controller('favs')
@@ -22,11 +22,7 @@ export class FavsController {
 
   @Post('track/:id')
   @HttpCode(201)
-  addTrack(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  addTrack(@Param('id', new ParseUUIDPipe()) id: string) {
     const created = this.db.addTrackToFavs(id);
 
     if (!created) {
@@ -38,11 +34,7 @@ export class FavsController {
 
   @Post('album/:id')
   @HttpCode(201)
-  addAlbum(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  addAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
     const created = this.db.addAlbumToFavs(id);
 
     if (!created) {
@@ -54,11 +46,7 @@ export class FavsController {
 
   @Post('artist/:id')
   @HttpCode(201)
-  addArtist(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  addArtist(@Param('id', new ParseUUIDPipe()) id: string) {
     const created = this.db.addArtistToFavs(id);
 
     if (!created) {
@@ -70,11 +58,7 @@ export class FavsController {
 
   @Delete('artist/:id')
   @HttpCode(204)
-  removeArtist(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  removeArtist(@Param('id', new ParseUUIDPipe()) id: string) {
     const removed = this.db.removeArtistFromFavs(id);
 
     if (!removed) {
@@ -86,11 +70,7 @@ export class FavsController {
 
   @Delete('track/:id')
   @HttpCode(204)
-  removeTrack(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  removeTrack(@Param('id', new ParseUUIDPipe()) id: string) {
     const removed = this.db.removeTrackFromFavs(id);
 
     if (!removed) {
@@ -100,11 +80,7 @@ export class FavsController {
 
   @Delete('album/:id')
   @HttpCode(204)
-  removeAlbum(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  removeAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
     const removed = this.db.removeAlbumFromFavs(id);
 
     if (!removed) {

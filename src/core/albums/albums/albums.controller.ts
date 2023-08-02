@@ -6,10 +6,10 @@ import {
   HttpCode,
   HttpException,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
-import { isUUID } from 'class-validator';
 import { DatabaseService } from 'src/shared/database/database.service';
 import { CreateAlbumDto, isCreateAlbumDto } from 'src/types/album';
 
@@ -25,11 +25,7 @@ export class AlbumsController {
 
   @Get(':id')
   @HttpCode(200)
-  getOne(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is invalid', 400);
-    }
-
+  getOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const album = this.database.getAlbumById(id);
 
     if (!album) {
@@ -51,11 +47,10 @@ export class AlbumsController {
 
   @Put(':id')
   @HttpCode(200)
-  updateOne(@Param('id') id: string, @Body() dto: CreateAlbumDto) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  updateOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() dto: CreateAlbumDto,
+  ) {
     if (!isCreateAlbumDto(dto)) {
       throw new HttpException('body does not contain required fields', 400);
     }
@@ -71,11 +66,7 @@ export class AlbumsController {
 
   @Delete(':id')
   @HttpCode(204)
-  deleteOne(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  deleteOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const deleted = this.database.deleteAlbum(id);
 
     if (!deleted) {

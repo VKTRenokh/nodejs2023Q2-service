@@ -6,10 +6,10 @@ import {
   HttpCode,
   HttpException,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
-import { isUUID } from 'class-validator';
 import { DatabaseService } from 'src/shared/database/database.service';
 import { isTrackCreateDto, TrackCreateDto } from 'src/types/track';
 
@@ -25,11 +25,7 @@ export class TracksController {
 
   @Get(':id')
   @HttpCode(200)
-  getOne(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('user id is invalid', 400);
-    }
-
+  getOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const track = this.dataBaseService.getTrackById(id);
 
     if (!track) {
@@ -41,11 +37,7 @@ export class TracksController {
 
   @Delete(':id')
   @HttpCode(204)
-  deleteOne(@Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is invalid', 400);
-    }
-
+  deleteOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const deleted = this.dataBaseService.deleteTrackById(id);
 
     if (!deleted) {
@@ -67,11 +59,10 @@ export class TracksController {
 
   @Put(':id')
   @HttpCode(200)
-  update(@Body() dto: TrackCreateDto, @Param('id') id: string) {
-    if (!isUUID(id)) {
-      throw new HttpException('uuid is not valid', 400);
-    }
-
+  update(
+    @Body() dto: TrackCreateDto,
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ) {
     if (!isTrackCreateDto(dto)) {
       throw new HttpException('body does not contain required fields', 400);
     }
