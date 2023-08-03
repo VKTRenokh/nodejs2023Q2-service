@@ -55,10 +55,6 @@ export class DatabaseService {
     },
   };
 
-  constructor() {
-    console.log('not hello from database service');
-  }
-
   parseUser(user: User) {
     return {
       login: user.login,

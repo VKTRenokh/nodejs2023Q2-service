@@ -1,8 +1,32 @@
 version: '3.9'
 services:
-  app:
+  api:
     build: .
+    container_name: homelibraryapi
     volumes:
       - .:/app
     ports:
       - '4000:4000'
+    networks:
+      - isolation-network
+  db:
+    build:
+      dockerfile: ./db/postgres.Dockerfile
+    image: postgres:15.2
+    restart: always
+    container_name: homelibrarydb
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_DB: ${DATABASE_DB}
+      POSTGRES_PORT: ${DATABASE_PORT}
+      PGDATA: /tmp
+    volumes:
+      - ./prisma/migrations/20230803101059_goodbye/:/docker-entrypoint-initdb.d
+    ports:
+      - '5432:5432'
+    networks:
+      - isolation-network
+networks:
+  isolation-network:
+    driver: bridge
