@@ -6,7 +6,7 @@ import { PrismaClient } from '@prisma/client';
 import { AppModule } from './app.module';
 
 const client = new PrismaClient();
-client.user.findMany().then((a) => console.log(a));
+client.user.findMany().then((a) => console.log('users', a));
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,5 +30,3 @@ async function bootstrap() {
   await app.listen(port);
 }
 bootstrap();
-
-console.log('bootstrap console log hot reload test');

@@ -1,15 +1,13 @@
-FROM node:18
+FROM node:18-alpine
 
 WORKDIR /app
 
 COPY package*.json .
 
+RUN npm i && npm cache clean --force
+
+EXPOSE ${PORT}
+
 COPY . .
-
-RUN npm i
-
-ENV PORT=4000
-
-EXPOSE 4000
 
 CMD [ "npm", "run", "start:dev" ]
