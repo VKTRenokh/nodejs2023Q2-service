@@ -1,72 +1,31 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
 import { CreateAlbumDto } from 'src/types/album';
 import { UpdatePasswordDto } from 'src/types/changeUser';
 import { CreateArtistDto } from 'src/types/createArtist';
 import { CreateUserDto } from 'src/types/createUser';
-import { Db } from 'src/types/db';
 import { Track, TrackCreateDto } from 'src/types/track';
 import { User } from 'src/types/user';
 
 @Injectable()
 export class DatabaseService {
-  private db: Db = {
-    users: [
-      {
-        id: crypto.randomUUID(),
-        login: crypto.randomBytes(16).toString('hex'),
-        version: 1,
-        password: crypto
-          .createHash('sha256')
-          .update(crypto.randomBytes(32))
-          .digest('base64'),
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      },
-    ],
-    tracks: [
-      {
-        id: crypto.randomUUID(),
-        name: crypto.randomBytes(16).toString('base64'),
-        duration: crypto.randomInt(20, 120),
-        artistId: null,
-        albumId: null,
-      },
-    ],
-    artists: [
-      {
-        id: crypto.randomUUID(),
-        name: crypto.randomBytes(16).toString('base64'),
-        grammy: false,
-      },
-    ],
-    albums: [
-      {
-        id: crypto.randomUUID(),
-        name: 'name',
-        year: 1947,
-        artistId: null,
-      },
-    ],
-    favs: {
-      tracks: [],
-      albums: [],
-      artists: [],
-    },
-  };
+  private db: PrismaClient = new PrismaClient();
 
   parseUser(user: User) {
     return {
       login: user.login,
       createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-      version: user.version,
+      updatedAt: new Date(user.updatedAt).getSeconds(),
+      version: new Date(user.createdAt).getSeconds(),
       id: user.id,
     };
   }
 
-  getAllUsers() {
-    return this.db.users.map((user) => {
+  async getAllUsers() {
+    const users = await this.db.user.findMany();
+
+    return users.map((user) => {
       return this.parseUser(user);
     });
   }

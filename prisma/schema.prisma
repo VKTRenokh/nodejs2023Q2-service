@@ -29,4 +29,17 @@ model Track {
   name     String
   artistId String?
   albumId  String?
+  duration Int
+}
+
+model Artist {
+  id     String  @id @default(uuid())
+  name   String
+  grammy Boolean
+}
+
+model Favs {
+  tracks  String[] @unique
+  albums  String[] @unique
+  artists String[] @unique
 }
