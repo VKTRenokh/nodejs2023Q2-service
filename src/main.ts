@@ -2,11 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { components, paths, security } from 'doc/docs';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 import { AppModule } from './app.module';
 
-const client = new PrismaClient();
-client.user.findMany().then((a) => console.log('users', a));
+// const client = new PrismaClient();
+// client.user.findMany().then((a) => console.log('users', a));
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

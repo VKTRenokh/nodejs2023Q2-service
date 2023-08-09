@@ -19,17 +19,17 @@ import { CreateUserDto, isCreateUserDto } from 'src/types/createUser';
 
 @Controller('user')
 export class UsersController {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(private readonly database: DatabaseService) { }
 
   @Get()
-  getAll() {
-    return this.database.getAllUsers();
+  async getAll() {
+    return await this.database.getAllUsers();
   }
 
   @Get(':id')
   @HttpCode(200)
-  get(@Param('id', new ParseUUIDPipe()) id: string) {
-    const user = this.database.getUserById(id);
+  async get(@Param('id', new ParseUUIDPipe()) id: string) {
+    const user = await this.database.getUserById(id);
 
     if (!user) {
       throw new HttpException('not found', 404);
@@ -40,8 +40,8 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id', new ParseUUIDPipe()) id: string) {
-    const isDeleted = this.database.deleteUserById(id);
+  async delete(@Param('id', new ParseUUIDPipe()) id: string) {
+    const isDeleted = await this.database.deleteUserById(id);
 
     if (!isDeleted) {
       throw new HttpException('user not found', 404);
@@ -50,17 +50,17 @@ export class UsersController {
 
   @Post()
   @HttpCode(201)
-  create(@Body() userDto: CreateUserDto) {
+  async create(@Body() userDto: CreateUserDto) {
     if (!isCreateUserDto(userDto)) {
       throw new HttpException('userDto is invalid', 400);
     }
 
-    return this.database.createUser(userDto);
+    return await this.database.createUser(userDto);
   }
 
   @Put(':id')
   @HttpCode(200)
-  change(
+  async change(
     @Body() changeUserPasswordDto: UpdatePasswordDto,
     @Param('id', new ParseUUIDPipe()) id: string,
   ) {
@@ -68,11 +68,11 @@ export class UsersController {
       throw new HttpException('body doesnt contains required fields', 400);
     }
 
-    if (!this.database.getUserById(id)) {
+    if (!await this.database.getUserById(id)) {
       throw new HttpException('user not found', 404);
     }
 
-    const user = this.database.updateUser(id, changeUserPasswordDto);
+    const user = await this.database.updateUser(id, changeUserPasswordDto);
 
     if (!user) {
       throw new HttpException('old password is not valid', 403);

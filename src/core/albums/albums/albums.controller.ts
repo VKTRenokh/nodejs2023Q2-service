@@ -15,7 +15,7 @@ import { CreateAlbumDto, isCreateAlbumDto } from 'src/types/album';
 
 @Controller('album')
 export class AlbumsController {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(private readonly database: DatabaseService) { }
 
   @Get()
   @HttpCode(200)
@@ -25,8 +25,8 @@ export class AlbumsController {
 
   @Get(':id')
   @HttpCode(200)
-  getOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const album = this.database.getAlbumById(id);
+  async getOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const album = await this.database.getAlbumById(id);
 
     if (!album) {
       throw new HttpException('album not found', 404);
@@ -37,25 +37,25 @@ export class AlbumsController {
 
   @Post()
   @HttpCode(201)
-  create(@Body() dto: CreateAlbumDto) {
+  async create(@Body() dto: CreateAlbumDto) {
     if (!isCreateAlbumDto(dto)) {
       throw new HttpException('body doesnt contain required fields', 400);
     }
 
-    return this.database.createAlbum(dto);
+    return await this.database.createAlbum(dto);
   }
 
   @Put(':id')
   @HttpCode(200)
-  updateOne(
-    @Param('id', new ParseUUIDPipe()) id: string,
+  async updateOne(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() dto: CreateAlbumDto,
   ) {
     if (!isCreateAlbumDto(dto)) {
       throw new HttpException('body does not contain required fields', 400);
     }
 
-    const updated = this.database.updateAlbum(id, dto);
+    const updated = await this.database.updateAlbum(id, dto);
 
     if (!updated) {
       throw new HttpException('album not found', 404);
@@ -66,8 +66,8 @@ export class AlbumsController {
 
   @Delete(':id')
   @HttpCode(204)
-  deleteOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const deleted = this.database.deleteAlbum(id);
+  async deleteOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const deleted = await this.database.deleteAlbum(id);
 
     if (!deleted) {
       throw new HttpException('album not found', 404);

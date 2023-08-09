@@ -12,54 +12,54 @@ import { DatabaseService } from 'src/shared/database/database.service';
 
 @Controller('favs')
 export class FavsController {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) { }
 
   @Get()
   @HttpCode(200)
-  getAll() {
-    return this.db.getAllFavs();
+  async getAll() {
+    return await this.db.getAllFavs();
   }
 
   @Post('track/:id')
   @HttpCode(201)
-  addTrack(@Param('id', new ParseUUIDPipe()) id: string) {
-    const created = this.db.addTrackToFavs(id);
+  async addTrack(@Param('id', new ParseUUIDPipe()) id: string) {
+    const created = await this.db.addTrackToFavs(id);
 
     if (!created) {
       throw new HttpException('track not found', 422);
     }
 
-    return id;
+    return created;
   }
 
   @Post('album/:id')
   @HttpCode(201)
-  addAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
-    const created = this.db.addAlbumToFavs(id);
+  async addAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
+    const created = await this.db.addAlbumToFavs(id);
 
     if (!created) {
       throw new HttpException('album not found', 422);
     }
 
-    return id;
+    return created;
   }
 
   @Post('artist/:id')
   @HttpCode(201)
-  addArtist(@Param('id', new ParseUUIDPipe()) id: string) {
-    const created = this.db.addArtistToFavs(id);
+  async addArtist(@Param('id', new ParseUUIDPipe()) id: string) {
+    const created = await this.db.addArtistToFavs(id);
 
     if (!created) {
       throw new HttpException('album not found', 422);
     }
 
-    return id;
+    return created;
   }
 
   @Delete('artist/:id')
   @HttpCode(204)
-  removeArtist(@Param('id', new ParseUUIDPipe()) id: string) {
-    const removed = this.db.removeArtistFromFavs(id);
+  async removeArtist(@Param('id', new ParseUUIDPipe()) id: string) {
+    const removed = await this.db.removeArtistFromFavs(id);
 
     if (!removed) {
       throw new HttpException('album not found', 422);
@@ -70,8 +70,8 @@ export class FavsController {
 
   @Delete('track/:id')
   @HttpCode(204)
-  removeTrack(@Param('id', new ParseUUIDPipe()) id: string) {
-    const removed = this.db.removeTrackFromFavs(id);
+  async removeTrack(@Param('id', new ParseUUIDPipe()) id: string) {
+    const removed = await this.db.removeTrackFromFavs(id);
 
     if (!removed) {
       throw new HttpException('album not found', 404);
@@ -80,8 +80,8 @@ export class FavsController {
 
   @Delete('album/:id')
   @HttpCode(204)
-  removeAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
-    const removed = this.db.removeAlbumFromFavs(id);
+  async removeAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
+    const removed = await this.db.removeAlbumFromFavs(id);
 
     if (!removed) {
       throw new HttpException('album not found', 404);

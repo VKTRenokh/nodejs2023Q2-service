@@ -1,9 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
@@ -17,11 +15,14 @@ model User {
   version   Int      @default(1)
   password  String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
 }
 
 model Album {
-  id String @id @default(uuid())
+  id       String  @id @default(uuid())
+  name     String
+  year     Int
+  artistId String?
 }
 
 model Track {
@@ -38,8 +39,14 @@ model Artist {
   grammy Boolean
 }
 
-model Favs {
-  tracks  String[] @unique
-  albums  String[] @unique
-  artists String[] @unique
+model FavTrack {
+  id String @unique
+}
+
+model FavArtist {
+  id String @unique
+}
+
+model FavAlbum {
+  id String @unique
 }

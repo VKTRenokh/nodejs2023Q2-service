@@ -20,8 +20,6 @@ services:
       POSTGRES_DB: ${DATABASE_DB}
       POSTGRES_PORT: ${DATABASE_PORT}
       PGDATA: /tmp
-    volumes:
-      - ./prisma/migrations/20230803101059_goodbye/:/docker-entrypoint-initdb.d
     ports:
       - '5432:5432'
     networks:

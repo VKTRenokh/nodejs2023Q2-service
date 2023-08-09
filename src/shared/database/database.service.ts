@@ -5,7 +5,7 @@ import { CreateAlbumDto } from 'src/types/album';
 import { UpdatePasswordDto } from 'src/types/changeUser';
 import { CreateArtistDto } from 'src/types/createArtist';
 import { CreateUserDto } from 'src/types/createUser';
-import { Track, TrackCreateDto } from 'src/types/track';
+import { TrackCreateDto } from 'src/types/track';
 import { User } from 'src/types/user';
 
 @Injectable()
@@ -13,11 +13,13 @@ export class DatabaseService {
   private db: PrismaClient = new PrismaClient();
 
   parseUser(user: User) {
+    // console.log(new Date(user.updatedAt).getTime(), new Date(user.createdAt).getTime())
+
     return {
       login: user.login,
-      createdAt: user.createdAt,
-      updatedAt: new Date(user.updatedAt).getSeconds(),
-      version: new Date(user.createdAt).getSeconds(),
+      createdAt: new Date(user.createdAt).getTime(),
+      updatedAt: new Date(user.updatedAt).getTime(),
+      version: user.version,
       id: user.id,
     };
   }
@@ -30,8 +32,12 @@ export class DatabaseService {
     });
   }
 
-  getUserById(id: string) {
-    const user = this.db.users.find((user) => user.id === id);
+  async getUserById(id: string) {
+    const user = await this.db.user.findUnique({
+      where: {
+        id,
+      },
+    });
 
     if (!user) {
       return null;
@@ -40,303 +46,374 @@ export class DatabaseService {
     return this.parseUser(user);
   }
 
-  deleteUserById(id: string) {
-    const userIndex = this.db.users.findIndex((user) => user.id === id);
-
-    if (userIndex === -1) {
-      return false;
-    }
-
-    this.db.users.splice(userIndex, 1);
-    return true;
-  }
-
-  createUser(userDto: CreateUserDto) {
-    const user = {
-      login: userDto.login,
-      password: crypto
-        .createHash('sha256')
-        .update(userDto.password)
-        .digest('base64'),
-      id: crypto.randomUUID(),
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-
-    this.db.users.push(user);
-
-    return this.parseUser(user);
-  }
-
-  updateUser(id: string, dto: UpdatePasswordDto) {
-    const userIndex = this.db.users.findIndex((user) => user.id === id);
-
-    if (userIndex === -1) {
-      return;
-    }
-
-    if (
-      crypto.createHash('sha256').update(dto.oldPassword).digest('base64') !==
-      this.db.users[userIndex].password
-    ) {
-      return;
-    }
-
-    this.db.users[userIndex].password = crypto
-      .createHash('sha256')
-      .update(dto.newPassword)
-      .digest('base64');
-
-    this.db.users[userIndex].version++;
-    this.db.users[userIndex].updatedAt = Date.now();
-
-    return this.parseUser(this.db.users[userIndex]);
-  }
-
-  getAllTracks() {
-    return this.db.tracks;
-  }
-
-  getTrackById(id: string) {
-    return this.db.tracks.find((track) => track.id === id);
-  }
-
-  deleteTrackById(id: string) {
-    const trackIndex = this.db.tracks.findIndex((track) => track.id === id);
-
-    if (trackIndex === -1) {
-      return false;
-    }
-
-    this.db.tracks.splice(trackIndex, 1);
-    return true;
-  }
-
-  createTrack(dto: TrackCreateDto) {
-    const newTrack: Track = { ...dto, id: crypto.randomUUID() };
-
-    this.db.tracks.push(newTrack);
-
-    return newTrack;
-  }
-
-  updateTrack(id: string, dto: TrackCreateDto) {
-    const trackIndex = this.db.tracks.findIndex((track) => track.id === id);
-
-    if (trackIndex === -1) {
-      return;
-    }
-
-    this.db.tracks[trackIndex] = { ...this.db.tracks[trackIndex], ...dto };
-
-    return this.db.tracks[trackIndex];
-  }
-
-  getAllArtists() {
-    return this.db.artists;
-  }
-
-  getArtistById(id: string) {
-    return this.db.artists.find((artist) => artist.id === id);
-  }
-
-  createArtist(dto: CreateArtistDto) {
-    const artist = { ...dto, id: crypto.randomUUID() };
-
-    this.db.artists.push(artist);
-
-    return artist;
-  }
-
-  deleteArtist(id: string) {
-    const artistIndex = this.db.artists.findIndex((artist) => artist.id === id);
-
-    if (artistIndex === -1) {
-      return false;
-    }
-
-    this.db.tracks = this.db.tracks.map((track) => {
-      if (track.artistId === id) {
-        track.artistId = null;
+  async deleteUserById(id: string) {
+    if (!await this.db.user.findUnique({
+      where: {
+        id
       }
-      return track;
-    });
+    })) {
+      return
+    }
 
-    this.db.albums = this.db.albums.map((track) => {
-      if (track.artistId === id) {
-        track.artistId = null;
+    return await this.db.user.delete({
+      where: {
+        id,
+      },
+    })
+  }
+
+  async createUser(userDto: CreateUserDto) {
+    const now = new Date()
+
+    return this.parseUser(await this.db.user.create({
+      data: {
+        login: userDto.login,
+        updatedAt: now,
+        createdAt: now,
+        password: crypto
+          .createHash('sha256')
+          .update(userDto.password)
+          .digest('base64'),
+      },
+    }));
+  }
+
+  async updateUser(id: string, dto: UpdatePasswordDto) {
+    try {
+      return this.parseUser(await this.db.user.update({
+        where: {
+          id,
+          password: crypto
+            .createHash('sha256')
+            .update(dto.oldPassword)
+            .digest('base64'),
+        },
+        data: {
+          version: {
+            increment: 1
+          },
+          updatedAt: new Date(),
+          password: crypto
+            .createHash('sha256')
+            .update(dto.newPassword)
+            .digest('base64'),
+        },
+      }));
+    } catch (e) {
+      return false
+    }
+  }
+
+  async getAllTracks() {
+    return await this.db.track.findMany();
+  }
+
+  async getTrackById(id: string) {
+    return await this.db.track.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async deleteTrackById(id: string) {
+    if (!await this.db.track.findUnique({
+      where: {
+        id
       }
-      return track;
-    });
+    })) {
+      return
+    }
 
-    this.db.artists.splice(artistIndex, 1);
+    return await this.db.track.delete({
+      where: {
+        id,
+      },
+    }).catch();
+  }
+
+  async createTrack(dto: TrackCreateDto) {
+    return await this.db.track.create({
+      data: dto,
+    });
+  }
+
+  async updateTrack(id: string, dto: TrackCreateDto) {
+    if (!await this.db.track.findUnique({
+      where: {
+        id
+      }
+    })) {
+      return
+    }
+
+    return await this.db.track.update({
+      where: {
+        id,
+      },
+      data: dto,
+    });
+  }
+
+  async getAllArtists() {
+    return await this.db.artist.findMany();
+  }
+
+  async getArtistById(id: string) {
+    return await this.db.artist.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async createArtist(dto: CreateArtistDto) {
+    return await this.db.artist.create({
+      data: dto,
+    });
+  }
+
+  async deleteArtist(id: string) {
+    try {
+      await this.db.artist.delete({
+        where: {
+          id,
+        },
+      });
+
+      await this.db.track.updateMany({
+        where: {
+          artistId: id,
+        },
+        data: {
+          artistId: null,
+        },
+      });
+
+      await this.db.album.updateMany({
+        where: {
+          artistId: id
+        },
+        data: {
+          artistId: null
+        },
+      })
+      return true;
+    } catch (e) {
+      return false
+    }
+  }
+
+  async updateArtist(id: string, dto: CreateArtistDto) {
+    if (!await this.db.artist.findUnique({
+      where: {
+        id
+      }
+    })) {
+      return
+    }
+
+    return await this.db.artist.update({
+      where: {
+        id
+      },
+      data: dto
+    })
+  }
+
+  async getAllAlbums() {
+    return await this.db.album.findMany()
+  }
+
+  async getAlbumById(id: string) {
+    return await this.db.album.findUnique({
+      where: {
+        id
+      }
+    })
+  }
+
+  async createAlbum(dto: CreateAlbumDto) {
+    return await this.db.album.create({
+      data: dto
+    })
+  }
+
+  async updateAlbum(id: string, dto: CreateAlbumDto) {
+    if (!await this.db.album.findUnique({
+      where: {
+        id
+      }
+    })) {
+      return
+    }
+
+    return await this.db.album.update({
+      where: {
+        id
+      },
+      data: dto,
+    })
+  }
+
+  async deleteAlbum(id: string) {
+    if (!await this.db.album.findUnique({
+      where: {
+        id
+      }
+    })) {
+      return
+    }
+
+    await this.db.album.delete({
+      where: {
+        id
+      }
+    })
+
+    await this.db.track.updateMany({
+      where: {
+        albumId: id,
+      },
+      data: {
+        albumId: null,
+      },
+    })
 
     return true;
   }
 
-  updateArtist(id: string, dto: CreateArtistDto) {
-    const artistIndex = this.db.artists.findIndex((artist) => artist.id === id);
+  async getFavTracks() {
+    const favs = await this.db.favTrack.findMany()
 
-    if (artistIndex === -1) {
-      return;
-    }
-
-    this.db.artists[artistIndex] = { ...dto, id };
-
-    return this.db.artists[artistIndex];
-  }
-
-  getAllAlbums() {
-    return this.db.albums;
-  }
-
-  getAlbumById(id: string) {
-    return this.db.albums.find((album) => album.id === id);
-  }
-
-  createAlbum(dto: CreateAlbumDto) {
-    const album = { ...dto, id: crypto.randomUUID() };
-
-    this.db.albums.push(album);
-
-    return album;
-  }
-
-  updateAlbum(id: string, dto: CreateAlbumDto) {
-    const albumIndex = this.db.albums.findIndex((album) => album.id === id);
-
-    if (albumIndex === -1) {
-      return;
-    }
-
-    this.db.albums[albumIndex] = { ...dto, id };
-
-    return this.db.albums[albumIndex];
-  }
-
-  deleteAlbum(id: string) {
-    const albumIndex = this.db.albums.findIndex((album) => album.id === id);
-
-    if (albumIndex === -1) {
-      return false;
-    }
-
-    this.db.tracks = this.db.tracks.map((track) => {
-      if (track.albumId === id) {
-        track.albumId = null;
-      }
-      return track;
-    });
-
-    this.db.albums.splice(albumIndex, 1);
-
-    return true;
-  }
-
-  getFavTracks() {
-    return this.db.favs.tracks
-      .map((id) => {
-        return this.getTrackById(id);
+    const tracks = await Promise.all(
+      favs.map(({ id }) => {
+        return this.getTrackById(id)
       })
-      .filter(Boolean);
+    )
+
+    return tracks.filter(Boolean)
   }
 
-  getFavAlbums() {
-    return this.db.favs.albums
-      .map((id) => {
-        return this.getAlbumById(id);
+  async getFavAlbums() {
+    const favs = await this.db.favAlbum.findMany()
+
+    const albums = await Promise.all(
+      favs.map(({ id }) => {
+        return this.getAlbumById(id)
       })
-      .filter(Boolean);
+    )
+
+    return albums.filter(Boolean)
   }
 
-  getFavArtists() {
-    return this.db.favs.artists
-      .map((id) => {
-        return this.getArtistById(id);
+  async getFavArtists() {
+    const favs = await this.db.favArtist.findMany()
+
+    const artists = await Promise.all(
+      favs.map(({ id }) => {
+        return this.getArtistById(id)
       })
-      .filter(Boolean);
+    )
+
+    return artists.filter(Boolean)
   }
 
-  getAllFavs() {
+  async getAllFavs() {
+    console.log('get all call', {
+      tracks: await this.getFavTracks(),
+      albums: await this.getFavAlbums(),
+      artists: await this.getFavArtists(),
+    })
+
     return {
-      tracks: this.getFavTracks(),
-      albums: this.getFavAlbums(),
-      artists: this.getFavArtists(),
+      tracks: await this.getFavTracks(),
+      albums: await this.getFavAlbums(),
+      artists: await this.getFavArtists(),
     };
   }
 
-  addTrackToFavs(id: string) {
-    const track = this.getTrackById(id);
+  async addTrackToFavs(id: string) {
+    const track = await this.getTrackById(id);
 
     if (!track) {
       return;
     }
 
-    this.db.favs.tracks.push(id);
+    await this.db.favTrack.create({
+      data: {
+        id
+      }
+    });
 
-    return id;
+    return await this.getTrackById(id);
   }
 
-  addAlbumToFavs(id: string) {
-    const album = this.getAlbumById(id);
+  async addAlbumToFavs(id: string) {
+    const album = await this.getAlbumById(id);
 
     if (!album) {
       return;
     }
 
-    this.db.favs.albums.push(id);
+    await this.db.favAlbum.create({
+      data: {
+        id
+      }
+    });
 
-    return id;
+    return await this.getAlbumById(id);
   }
 
-  addArtistToFavs(id: string) {
-    const artist = this.getArtistById(id);
+  async addArtistToFavs(id: string) {
+    const artist = await this.getArtistById(id);
 
     if (!artist) {
       return;
     }
 
-    this.db.favs.artists.push(id);
+    await this.db.favArtist.create({
+      data: {
+        id
+      }
+    });
 
-    return id;
+    return await this.getArtistById(id);
   }
 
-  removeArtistFromFavs(id: string) {
-    const artistIndex = this.db.favs.artists.findIndex(
-      (artist) => artist === id,
-    );
-
-    if (!artistIndex) {
-      return false;
+  async removeArtistFromFavs(id: string) {
+    try {
+      return await this.db.favArtist.delete({
+        where: {
+          id
+        },
+      })
+    } catch (e) {
+      return false
     }
-
-    this.db.favs.artists.splice(artistIndex, 1);
-
-    return true;
   }
 
-  removeAlbumFromFavs(id: string) {
-    const albumIndex = this.db.favs.albums.findIndex((artist) => artist === id);
-
-    if (!albumIndex) {
-      return false;
+  async removeAlbumFromFavs(id: string) {
+    try {
+      return await this.db.favAlbum.delete({
+        where: {
+          id
+        }
+      })
+    } catch (e) {
+      return false
     }
-
-    this.db.favs.albums.splice(albumIndex, 1);
-
-    return true;
   }
 
-  removeTrackFromFavs(id: string) {
-    const trackIndex = this.db.favs.tracks.findIndex((artist) => artist === id);
-
-    if (!trackIndex) {
-      return false;
+  async removeTrackFromFavs(id: string) {
+    try {
+      return await this.db.favTrack.delete({
+        where: {
+          id
+        },
+      })
+    } catch (e) {
+      return false
     }
-
-    this.db.favs.tracks.splice(trackIndex, 1);
-
-    return true;
   }
 }

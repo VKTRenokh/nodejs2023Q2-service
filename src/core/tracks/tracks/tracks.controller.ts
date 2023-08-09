@@ -15,18 +15,18 @@ import { isTrackCreateDto, TrackCreateDto } from 'src/types/track';
 
 @Controller('track')
 export class TracksController {
-  constructor(private readonly dataBaseService: DatabaseService) {}
+  constructor(private readonly dataBaseService: DatabaseService) { }
 
   @Get()
   @HttpCode(200)
-  getAll() {
-    return this.dataBaseService.getAllTracks();
+  async getAll() {
+    return await this.dataBaseService.getAllTracks();
   }
 
   @Get(':id')
   @HttpCode(200)
-  getOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const track = this.dataBaseService.getTrackById(id);
+  async getOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const track = await this.dataBaseService.getTrackById(id);
 
     if (!track) {
       throw new HttpException('track not found', 404);
@@ -37,8 +37,8 @@ export class TracksController {
 
   @Delete(':id')
   @HttpCode(204)
-  deleteOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const deleted = this.dataBaseService.deleteTrackById(id);
+  async deleteOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const deleted = await this.dataBaseService.deleteTrackById(id);
 
     if (!deleted) {
       throw new HttpException('track not found', 404);
@@ -49,17 +49,17 @@ export class TracksController {
 
   @Post()
   @HttpCode(201)
-  create(@Body() dto: TrackCreateDto) {
+  async create(@Body() dto: TrackCreateDto) {
     if (!isTrackCreateDto(dto)) {
       throw new HttpException('body does not contain required fields', 400);
     }
 
-    return this.dataBaseService.createTrack(dto);
+    return await this.dataBaseService.createTrack(dto);
   }
 
   @Put(':id')
   @HttpCode(200)
-  update(
+  async update(
     @Body() dto: TrackCreateDto,
     @Param('id', new ParseUUIDPipe()) id: string,
   ) {
@@ -67,7 +67,7 @@ export class TracksController {
       throw new HttpException('body does not contain required fields', 400);
     }
 
-    const updated = this.dataBaseService.updateTrack(id, dto);
+    const updated = await this.dataBaseService.updateTrack(id, dto);
 
     if (!updated) {
       throw new HttpException('track not found', 404);
