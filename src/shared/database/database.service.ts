@@ -318,12 +318,6 @@ export class DatabaseService {
   }
 
   async getAllFavs() {
-    console.log('get all call', {
-      tracks: await this.getFavTracks(),
-      albums: await this.getFavAlbums(),
-      artists: await this.getFavArtists(),
-    })
-
     return {
       tracks: await this.getFavTracks(),
       albums: await this.getFavAlbums(),
