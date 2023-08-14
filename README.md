@@ -8,31 +8,18 @@
 ## Downloading
 
 ```
-git clone https://github.com/VKTRenokh/nodejs2023Q2-service.git -b develop
+git clone https://github.com/VKTRenokh/nodejs2023Q2-service.git -b home-service-part-2
 ```
 
-## Installing NPM modules
-
+## Running
+build and run a container
+```bash
+docker compose up --build
 ```
-npm install
+Migrate db:
+```bash
+npm run migrate
 ```
-
-## Running application
-
-```
-npm start
-```
-
-## Running application in dev mode
-
-```
-npm start:dev
-```
-
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
-
 ## Testing
 
 After application running open new terminal and enter:
