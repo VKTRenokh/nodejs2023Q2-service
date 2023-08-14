@@ -1,0 +1,36 @@
+version: '3.9'
+services:
+  api:
+    build: .
+    container_name: homelibraryapi
+    depends_on:
+      db:
+        condition: service_started
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - '${PORT}:${PORT}'
+    networks:
+      - isolation-network
+  db:
+    build: ./db
+    image: postgres:15.2
+    restart: always
+    container_name: homelibrarydb
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_DB: ${DATABASE_DB}
+      POSTGRES_PORT: ${DATABASE_PORT}
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - '${DATABASE_PORT}:${DATABASE_PORT}'
+    networks:
+      - isolation-network
+volumes:
+  db:
+networks:
+  isolation-network:
+    driver: bridge

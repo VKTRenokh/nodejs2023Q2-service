@@ -1,0 +1,3 @@
+FROM postgres:13.5-alpine3.15
+
+EXPOSE ${DATABASE_PORT}
