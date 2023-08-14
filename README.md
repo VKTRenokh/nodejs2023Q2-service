@@ -12,6 +12,8 @@ git clone https://github.com/VKTRenokh/nodejs2023Q2-service.git -b home-service-
 ```
 
 ## Running
+Rename `.env.example` file to `.env`
+
 build and run a container
 ```bash
 docker compose up --build
@@ -20,6 +22,7 @@ Migrate db:
 ```bash
 npm run migrate
 ```
+Change HOST variable in .env to `db` and restart docker compose
 ## Testing
 
 After application running open new terminal and enter:

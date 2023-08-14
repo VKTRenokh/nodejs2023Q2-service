@@ -13,8 +13,6 @@ export class DatabaseService {
   private db: PrismaClient = new PrismaClient();
 
   parseUser(user: User) {
-    // console.log(new Date(user.updatedAt).getTime(), new Date(user.createdAt).getTime())
-
     return {
       login: user.login,
       createdAt: new Date(user.createdAt).getTime(),
