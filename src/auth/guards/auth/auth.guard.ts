@@ -2,19 +2,15 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 import { IS_PUBLIC_KEY } from 'src/auth/decorators/public/public.decorator';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private reflector: Reflector, private jwtService: JwtService, private configService: ConfigService) { }
 
   private extractTokenFromHeaders(request: Request) {
-    if (!request.headers || !request.headers['authorization']) {
-      return undefined
-    }
-
-    const [type, token] = request.headers['authorization'].split(' ');
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }
 
@@ -42,7 +38,7 @@ export class AuthGuard implements CanActivate {
       request['user'] = payload
     } catch (e) {
       console.log(e)
-      throw new UnauthorizedException('idi nahui ti ne avtorizovan')
+      throw new UnauthorizedException()
     }
 
     return true

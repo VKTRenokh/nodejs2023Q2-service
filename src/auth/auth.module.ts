@@ -4,10 +4,11 @@ import { AuthController } from './auth.controller';
 import { SharedModule } from 'src/shared/shared.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { LoggerModule } from 'src/logger/logger.module';
 
 @Global()
 @Module({
-  imports: [SharedModule, JwtModule.registerAsync({
+  imports: [SharedModule, LoggerModule, JwtModule.registerAsync({
     imports: [ConfigModule],
     inject: [ConfigService],
     useFactory(configService: ConfigService) {
