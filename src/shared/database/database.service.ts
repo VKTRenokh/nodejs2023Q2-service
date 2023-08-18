@@ -84,18 +84,14 @@ export class DatabaseService {
 
     console.log('pes')
 
-    const cryptSalt = +this.configService.get('CRYPT_SALT')
-    console.log('pes')
-    const salt = await genSalt(10)
-
-    // const crypted = await bcrypt.hash(userDto.password, await bcrypt.genSalt(+this.configService.get("CRYPT_SALT")))
+    const crypted = await hash(userDto.password, await genSalt(+this.configService.get("CRYPT_SALT")))
 
     return this.parseUser(await this.db.user.create({
       data: {
         login: userDto.login,
         updatedAt: now,
         createdAt: now,
-        password: 'popa'
+        password: crypted
       },
     }));
   }
