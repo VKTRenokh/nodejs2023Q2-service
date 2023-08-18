@@ -14,6 +14,10 @@ export class AuthGuard implements CanActivate {
     return type === 'Bearer' ? token : undefined;
   }
 
+  private extractTokenFromBody(request: Request) {
+    return "refreshToken" in request.body
+  }
+
   async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {
@@ -27,6 +31,10 @@ export class AuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest()
+
+    if (this.extractTokenFromBody(request)) {
+      return true
+    }
 
     const accessToken = this.extractTokenFromHeaders(request)
 

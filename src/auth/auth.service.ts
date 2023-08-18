@@ -17,7 +17,7 @@ export class AuthService {
       return
     }
 
-    if ((await compare(dto.password, user.password))) {
+    if (!(await compare(dto.password, user.password))) {
       return
     }
 
