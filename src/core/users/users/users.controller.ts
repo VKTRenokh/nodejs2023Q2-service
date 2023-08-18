@@ -10,6 +10,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { LoggerService } from 'src/logger/services/logger/logger.service';
 import { DatabaseService } from 'src/shared/database/database.service';
 import {
   isUserUpdatePasswordDto,
@@ -19,10 +20,11 @@ import { CreateUserDto, isCreateUserDto } from 'src/types/createUser';
 
 @Controller('user')
 export class UsersController {
-  constructor(private readonly database: DatabaseService) { }
+  constructor(private readonly database: DatabaseService, private readonly loggerService: LoggerService) { }
 
   @Get()
   async getAll() {
+    this.loggerService.log('get all')
     return await this.database.getAllUsers();
   }
 

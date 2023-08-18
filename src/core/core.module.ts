@@ -18,4 +18,4 @@ import { UsersModule } from './users/users.module';
   ],
   providers: [DatabaseService],
 })
-export class CoreModule {}
+export class CoreModule { }

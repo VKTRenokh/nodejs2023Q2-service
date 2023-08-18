@@ -3,9 +3,9 @@ services:
   api:
     build: .
     container_name: homelibraryapi
-    depends_on:
-      db:
-        condition: service_started
+    # depends_on:
+    #   db:
+    #     condition: service_started
     restart: always
     volumes:
       - .:/app

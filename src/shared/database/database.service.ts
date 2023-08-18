@@ -7,10 +7,15 @@ import { CreateArtistDto } from 'src/types/createArtist';
 import { CreateUserDto } from 'src/types/createUser';
 import { TrackCreateDto } from 'src/types/track';
 import { User } from 'src/types/user';
+import { genSalt, hash } from 'bcryptjs';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DatabaseService {
+
   private db: PrismaClient = new PrismaClient();
+
+  constructor(private configService: ConfigService) { console.log('kakoi nahui empty') }
 
   parseUser(user: User) {
     return {
@@ -44,6 +49,20 @@ export class DatabaseService {
     return this.parseUser(user);
   }
 
+  async getUserByName(login: string) {
+    const user = await this.db.user.findFirst({
+      where: {
+        login,
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  }
+
   async deleteUserById(id: string) {
     if (!await this.db.user.findUnique({
       where: {
@@ -63,15 +82,20 @@ export class DatabaseService {
   async createUser(userDto: CreateUserDto) {
     const now = new Date()
 
+    console.log('pes')
+
+    const cryptSalt = +this.configService.get('CRYPT_SALT')
+    console.log('pes')
+    const salt = await genSalt(10)
+
+    // const crypted = await bcrypt.hash(userDto.password, await bcrypt.genSalt(+this.configService.get("CRYPT_SALT")))
+
     return this.parseUser(await this.db.user.create({
       data: {
         login: userDto.login,
         updatedAt: now,
         createdAt: now,
-        password: crypto
-          .createHash('sha256')
-          .update(userDto.password)
-          .digest('base64'),
+        password: 'popa'
       },
     }));
   }
