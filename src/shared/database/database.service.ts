@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import * as crypto from 'crypto';
 import { CreateAlbumDto } from 'src/types/album';
 import { UpdatePasswordDto } from 'src/types/changeUser';
 import { CreateArtistDto } from 'src/types/createArtist';
 import { CreateUserDto } from 'src/types/createUser';
 import { TrackCreateDto } from 'src/types/track';
 import { User } from 'src/types/user';
-import { genSalt, hash } from 'bcryptjs';
+import { genSalt, hash, compare } from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -82,8 +81,6 @@ export class DatabaseService {
   async createUser(userDto: CreateUserDto) {
     const now = new Date()
 
-    console.log('pes')
-
     const crypted = await hash(userDto.password, await genSalt(+this.configService.get("CRYPT_SALT")))
 
     return this.parseUser(await this.db.user.create({
@@ -98,23 +95,26 @@ export class DatabaseService {
 
   async updateUser(id: string, dto: UpdatePasswordDto) {
     try {
+      const user = await this.db.user.findUnique({
+        where: {
+          id
+        }
+      })
+
+      if (!user || !(await compare(dto.oldPassword, user.password))) {
+        return
+      }
+
       return this.parseUser(await this.db.user.update({
         where: {
           id,
-          password: crypto
-            .createHash('sha256')
-            .update(dto.oldPassword)
-            .digest('base64'),
         },
         data: {
           version: {
             increment: 1
           },
           updatedAt: new Date(),
-          password: crypto
-            .createHash('sha256')
-            .update(dto.newPassword)
-            .digest('base64'),
+          password: await hash(dto.newPassword, await genSalt(+this.configService.get("CRYPT_SALT")))
         },
       }));
     } catch (e) {

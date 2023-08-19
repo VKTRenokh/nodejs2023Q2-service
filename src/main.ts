@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { components, paths, security } from 'doc/docs';
+import { components, paths, security } from 'doc/doc';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -21,7 +21,7 @@ async function bootstrap() {
   document.security = security;
   document.paths = paths;
 
-  SwaggerModule.setup('doc', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   await app.listen(port);
 }
