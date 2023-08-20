@@ -14,7 +14,7 @@ export class DatabaseService {
 
   private db: PrismaClient = new PrismaClient();
 
-  constructor(private configService: ConfigService) { console.log('kakoi nahui empty') }
+  constructor(private configService: ConfigService) { }
 
   parseUser(user: User) {
     return {
